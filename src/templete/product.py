@@ -1,5 +1,6 @@
 
 import logging
+from .utils import UnitOfMeasure
 
 logger = logging.getLogger(__name__)
 

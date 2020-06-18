@@ -1,5 +1,6 @@
 import logging
 import math
+from .mini_planogram import MiniPlanogram
 from .utils import pairwise
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class Planogram:
         self.dos = float('inf')
         self.segments = list()
         self.store_id = None
+        self.mini_planogram_set = list()
 
     @property
     def shelves(self):
@@ -174,12 +176,42 @@ class Planogram:
                             pos.z_cap_orientation)
                         pos.z_cap_units_high = int(shel.merch_height / height)
 
+    def extract_mini_info(self):
+        for seg in self.segments:
+            for shel in seg.shelves:
+                mini = MiniPlanogram()
+                mini.name = shel.name
+                mini.coordinate_x = shel.x
+                mini.coordinate_y = shel.y
+                mini.shelf_width = shel.width
+                mini.shelf_height = shel.height
+                mini.shelf_depth = shel.depth
+                mini.merch_width = shel.get_merch_width()
+                mini.merch_height = shel.merch_height
+                mini.merch_depth = shel.merch_depth
+                mini.combine_direction = shel.combine_direction
+                # print(shel.name)
+                # print(shel.x)
+                # print(shel.y)
+                # print(shel.width)
+                # print(shel.height)
+                # print(shel.depth)
+                # print(shel.get_merch_width())
+                # print(shel.merch_height)
+                # print(shel.merch_depth)
+                # print(shel.combine_direction)
+                for pos in shel.positions:
+                    # print(pos.product_upc)
+                    mini.products.append(pos.product_upc)
+                self.mini_planogram_set.append(mini)
+
     def calculate_merch_dimensions(self, calculate_segment_dimensions=True):
         self.sort_lists()
         self.calculate_merch_depths()
         self.calculate_missing_merch_heights()
         # self.exclude_shelves_due_to_merch_space()
-        self.caculate_z_capping()
+        # self.caculate_z_capping()
         self.calculate_levels()
+        self.extract_mini_info()
         # if calculate_segment_dimensions:
         #     self.calculate_segment_dimensions()

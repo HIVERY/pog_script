@@ -44,7 +44,6 @@ class PSAInterface:
                     segment = self._read_segment_row(row, segment_number)
                     segment.planogram_id = planogram.store_id
                     planogram.segments.append(segment)
-                    # print(">>>  ", segment)
                 # read fixture
                 elif str(row[0]) == 'Fixture':
                     if planogram is None:
@@ -71,10 +70,6 @@ class PSAInterface:
                                 # It's a shelf
                                 fixture.segment_id = segment.number
                                 segment.shelves.append(fixture)
-                                # print(segment)
-                                # print('++',fixture)
-                                # print('------1   ',fixture.name)
-                                # segment.fixtures.append(fixture)
                 # read position
                 elif str(row[0]) == 'Position':
                     if not fixture:
@@ -91,8 +86,8 @@ class PSAInterface:
                         # print(position.product_upc)
                         # print('--',fixture)
 
-
     """ ALL FUNCTIONs """
+
     def _read_product_row(self, row, overwrite=False):
         upc = parse_int(row[1])
         if upc is None:
