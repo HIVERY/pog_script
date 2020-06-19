@@ -44,10 +44,6 @@ class Position():
         self.fixture = None  # fixture
         self.number = None  # int //left most position number=1
 
-    # def __str__(self):
-    #     # TODO: Return a more useful representation than just the underling UPC
-    #     return "UPC: {}".format(self.product.upc)
-
     @property
     def width(self):
         return self.get_width()

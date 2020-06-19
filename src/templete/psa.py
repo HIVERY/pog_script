@@ -152,8 +152,12 @@ class PSAInterface:
                 else:
                     logger.error("Unknown combine entry in shelf row {}"
                                  .format(combine_flag))
+            elif combine_flag == 0:
+                fixture.combine_direction = "NO"
             else:
                 fixture.can_combine = False
+                fixture.combine_direction = "UNkonw"
+                
             fixture.merch_height = parse_float(row[23], 0.0)
 
             fixture.overhang_back = parse_float(row[31], 0.0)

@@ -2,6 +2,7 @@ from itertools import tee
 import re
 import logging
 import enum
+import copy
 
 logger = logging.getLogger(__name__)
 
@@ -116,3 +117,54 @@ class ReadData:
         if self.file:
             # If it was a file close it
             self.file.close()
+
+
+def dynamicCombine(lis):
+    ll = copy.deepcopy(lis)
+    comb = []
+    if lis[0].combine_direction == 'NO' or lis[0].combine_direction == 'LEFT':
+        comb.append([lis[0]])
+        lis.pop(0)
+    dp = [0] * len(lis)
+    dp[0] = [lis[0]]
+    prune = [1] * len(lis)
+    for i in range(1, len(lis)):
+        # print(comb)
+        if lis[i].combine_direction == "NO":
+            if prune[i-1]:
+                comb.append(dp[i-1])
+                prune[i-1] = 0
+            if len(dp[i-1]) != 1 and dp[i-1][-1].combine_direction != 'NO':
+                comb.append([lis[i]])
+            dp[i] = [lis[i]]
+        if dp[i-1][-1].combine_direction in ["RIGHT", "BOTH"] and lis[i].combine_direction == 'BOTH':
+            dp[i] = dp[i-1] + [lis[i]]
+            if i == len(lis) - 1:
+                comb.append(dp[i])
+        if dp[i-1][-1].combine_direction in ["RIGHT", "BOTH"] and lis[i].combine_direction == 'LEFT':
+            dp[i] = dp[i-1] + [lis[i]]
+            if prune[i]:
+                comb.append(dp[i])
+                prune[i] = 0
+        if dp[i - 1][-1].combine_direction in ['LEFT', 'NO']:
+            dp[i] = [lis[i]]
+            if i == len(lis) - 1:
+                comb.append(dp[i])
+        if dp[i-1][-1].combine_direction in ['LEFT', 'NO'] and lis[i].combine_direction == 'LEFT':
+            comb.append([lis[i]])
+        if dp[i-1][-1].combine_direction in ["RIGHT", "BOTH"] and lis[i].combine_direction == 'RIGHT':
+            dp[i] = [lis[i]]
+            if prune[i-1]:
+                comb.append(dp[i-1])
+                prune[i-1] = 0
+        if i == len(lis) - 1 and lis[i].combine_direction == 'RIGHT':
+            comb.append([lis[i]])
+    # input(lis)
+    # # print(comb)
+    # print([v for k in comb for v in k])
+    print([v for k in comb for v in k] == ll)
+    # k = [v for k in comb for v in k]
+    # for i in range(len(k)):
+    #     print(k[i])
+    #     print(k[i] == lis[i])
+    return comb

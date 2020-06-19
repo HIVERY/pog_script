@@ -1,6 +1,6 @@
 import logging
 import math
-from .mini_planogram import MiniPlanogram
+from .mini_planogram import MiniPlanogram, MiniPosition
 from .utils import pairwise
 
 logger = logging.getLogger(__name__)
@@ -190,19 +190,14 @@ class Planogram:
                 mini.merch_height = shel.merch_height
                 mini.merch_depth = shel.merch_depth
                 mini.combine_direction = shel.combine_direction
-                # print(shel.name)
-                # print(shel.x)
-                # print(shel.y)
-                # print(shel.width)
-                # print(shel.height)
-                # print(shel.depth)
-                # print(shel.get_merch_width())
-                # print(shel.merch_height)
-                # print(shel.merch_depth)
-                # print(shel.combine_direction)
                 for pos in shel.positions:
-                    # print(pos.product_upc)
-                    mini.products.append(pos.product_upc)
+                    mini_p = MiniPosition(
+                        upc=pos.product_upc,
+                        number_of_facing_wide=pos.base_units_wide,
+                        number_of_facing_high=pos.base_units_high,
+                        number_of_facing_deep=pos.base_units_deep,
+                    )
+                    mini.products.append(mini_p)
                 self.mini_planogram_set.append(mini)
 
     def calculate_merch_dimensions(self, calculate_segment_dimensions=True):

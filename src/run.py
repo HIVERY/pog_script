@@ -1,4 +1,5 @@
 from src.templete.psa import PSAInterface
+from src.templete.utils import dynamicCombine
 import click
 from collections import defaultdict
 import os
@@ -29,26 +30,40 @@ def extract(path, out):
         key_set = sorted(
             set([shelf.coordinate_y for shelf in planogram.mini_planogram_set]))
         p_dict = defaultdict(list)
+        lis = []
         for coordinate_y in key_set:
             combine = []
             for shelf in sorted(planogram.mini_planogram_set, key=lambda x: x.coordinate_x):
                 if shelf.coordinate_y == coordinate_y:
-                    if shelf.combine_direction in ["RIGHT", "BOTH"]:
-                        combine.append(shelf)
-                    if shelf.combine_direction == "LEFT":
-                        combine.append(shelf)
-                        # print(shelf.name)
-                        number = ','.join(
-                            [shelf.name.split('-', 1)[1].strip() if '-' in shelf.name else shelf.name.split(' ')[-1].strip() for shel in combine])
-                        key = "".join([shelf.name.split('-', 1)
-                                       [0], "- ", "[", number, "]"])
-                        p_dict[key] = combine
-                        combine = []
+                    combine.append(shelf)
+            lis.append(combine)
+        for shl in lis:
+            comb = dynamicCombine(shl)
+        return
+        # for coordinate_y in key_set:
+        #     combine = []
+        #     for shelf in sorted(planogram.mini_planogram_set, key=lambda x: x.coordinate_x):
+        #         if shelf.coordinate_y == coordinate_y:
+        #             if shelf.combine_direction == "NO":
+        #                 p_dict[shelf.name] = [shelf]
+        #                 continue
+        #             if shelf.combine_direction in ["RIGHT", "BOTH"]:
+        #                 combine.append(shelf)
+        #             if shelf.combine_direction == "LEFT":
+        #                 combine.append(shelf)
+        #                 # number = ','.join(
+        #                 #     [shelf.name.split('-', 1)[1].strip() if '-' in shelf.name else shelf.name.split(' ')[-1].strip() for shel in combine])
+        #                 # key = "".join([shelf.name.split('-', 1)
+        #                 #                [0], "- ", "[", number, "]"])
+        #                 key = " - ".join([shel.name for shel in combine])
+        #                 p_dict[key] = combine
+        #                 # print(p_dict)
+        #                 combine = []
         fname = os.path.join(out, os.path.basename(
             path).replace('.psa', '.csv'))
         with open(fname, 'w') as fout:
             writer = csv.writer(fout)
-            header = ["Shelf_name", "coordinate_x", "coordinate_y", "shelf_width",
+            header = ["shelf_name", "coordinate_x", "coordinate_y", "shelf_width",
                       "shelf_height", "shelf_depth", "merch_width", "merch_height", 'merch_depth']
             writer.writerow(header)
             for k, v in p_dict.items():
@@ -65,15 +80,17 @@ def extract(path, out):
                        v[0].shelf_depth,
                        merch_width,
                        v[0].merch_height,
-                       v[0].merch_depth,
-                       ]
+                       v[0].merch_depth]
                 writer.writerow(row)
-                for upc in products:
-                    writer.writerow([upc])
+                for mini_p in products:
+                    writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
+                                     mini_p.number_of_facing_deep, mini_p.upc])
 
     if os.path.isfile(path):
         process(path, out)
     elif os.path.isdir(path):
+        if not os.path.exists(out):
+            os.mkdir(os.path.join(os.getcwd(), out))
         for dirpath, subdirs, files in os.walk(path):
             for x in tqdm.tqdm(files):
                 if x.endswith(".psa"):
