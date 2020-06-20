@@ -120,11 +120,22 @@ class ReadData:
 
 
 def dynamicCombine(lis):
-    ll = copy.deepcopy(lis)
+    # print([k.combine_direction for k in lis])
+    # ll = copy.deepcopy(lis)
     comb = []
-    if lis[0].combine_direction == 'NO' or lis[0].combine_direction == 'LEFT':
+    if len(lis) == 1:
+        # print(True)
+        return [lis]
+    while lis and lis[0].combine_direction in ['NO', 'LEFT']:
         comb.append([lis[0]])
         lis.pop(0)
+    if len(lis) == 1:
+        comb.append([lis[0]]) 
+        # print([v for k in comb for v in k] == ll)
+        return comb
+    if not lis:
+        # print([v for k in comb for v in k] == ll)
+        return comb
     dp = [0] * len(lis)
     dp[0] = [lis[0]]
     prune = [1] * len(lis)
@@ -134,9 +145,13 @@ def dynamicCombine(lis):
             if prune[i-1]:
                 comb.append(dp[i-1])
                 prune[i-1] = 0
-            if len(dp[i-1]) != 1 and dp[i-1][-1].combine_direction != 'NO':
+            if len(dp[i-1]) != 1 or (len(dp[i-1]) >= 1 and dp[i-1][-1].combine_direction != 'NO'):
+                prune[i] = 0
                 comb.append([lis[i]])
             dp[i] = [lis[i]]
+            if prune[i]:
+                comb.append(dp[i])
+                prune[i] = 0
         if dp[i-1][-1].combine_direction in ["RIGHT", "BOTH"] and lis[i].combine_direction == 'BOTH':
             dp[i] = dp[i-1] + [lis[i]]
             if i == len(lis) - 1:
@@ -148,21 +163,24 @@ def dynamicCombine(lis):
                 prune[i] = 0
         if dp[i - 1][-1].combine_direction in ['LEFT', 'NO']:
             dp[i] = [lis[i]]
-            if i == len(lis) - 1:
+            if i == len(lis) - 1 and prune[i]:
                 comb.append(dp[i])
+                prune[i] = 0
         if dp[i-1][-1].combine_direction in ['LEFT', 'NO'] and lis[i].combine_direction == 'LEFT':
-            comb.append([lis[i]])
+            if prune[i]:
+                comb.append([lis[i]])
+                prune[i] = 0
         if dp[i-1][-1].combine_direction in ["RIGHT", "BOTH"] and lis[i].combine_direction == 'RIGHT':
             dp[i] = [lis[i]]
             if prune[i-1]:
                 comb.append(dp[i-1])
                 prune[i-1] = 0
-        if i == len(lis) - 1 and lis[i].combine_direction == 'RIGHT':
+        if i == len(lis) - 1 and lis[i].combine_direction == 'RIGHT' and prune[i]:
             comb.append([lis[i]])
-    # input(lis)
-    # # print(comb)
-    # print([v for k in comb for v in k])
-    print([v for k in comb for v in k] == ll)
+    # print(comb)
+    # print(dp)
+    # print([v.combine_direction for k in comb for v in k])
+    # print([v for k in comb for v in k] == ll)
     # k = [v for k in comb for v in k]
     # for i in range(len(k)):
     #     print(k[i])

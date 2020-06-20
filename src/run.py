@@ -29,7 +29,6 @@ def extract(path, out):
         planogram.calculate_merch_dimensions()
         key_set = sorted(
             set([shelf.coordinate_y for shelf in planogram.mini_planogram_set]))
-        p_dict = defaultdict(list)
         lis = []
         for coordinate_y in key_set:
             combine = []
@@ -37,9 +36,7 @@ def extract(path, out):
                 if shelf.coordinate_y == coordinate_y:
                     combine.append(shelf)
             lis.append(combine)
-        for shl in lis:
-            comb = dynamicCombine(shl)
-        return
+        shelf_combine = [dynamicCombine(shl) for shl in lis]
         # for coordinate_y in key_set:
         #     combine = []
         #     for shelf in sorted(planogram.mini_planogram_set, key=lambda x: x.coordinate_x):
@@ -66,25 +63,46 @@ def extract(path, out):
             header = ["shelf_name", "coordinate_x", "coordinate_y", "shelf_width",
                       "shelf_height", "shelf_depth", "merch_width", "merch_height", 'merch_depth']
             writer.writerow(header)
-            for k, v in p_dict.items():
-                shelf_width, merch_width, products = 0, 0, []
-                for shelf in v:
-                    shelf_width += shelf.shelf_width
-                    merch_width += shelf.merch_width
-                    products += shelf.products
-                row = [k,
-                       v[0].coordinate_x,
-                       v[0].coordinate_y,
-                       shelf_width,
-                       v[0].shelf_height,
-                       v[0].shelf_depth,
-                       merch_width,
-                       v[0].merch_height,
-                       v[0].merch_depth]
-                writer.writerow(row)
-                for mini_p in products:
-                    writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
-                                     mini_p.number_of_facing_deep, mini_p.upc])
+            for shelf in shelf_combine:
+                for cb in shelf:
+                    shelf_width, merch_width, products = 0, 0, []
+                    for sf in cb:
+                        shelf_width += sf.shelf_width
+                        merch_width += sf.merch_width
+                        products += sf.products
+                    row = [" - ".join([shel.name for shel in cb]),
+                           cb[0].coordinate_x,
+                           cb[0].coordinate_y,
+                           shelf_width,
+                           cb[0].shelf_height,
+                           cb[0].shelf_depth,
+                           merch_width,
+                           cb[0].merch_height,
+                           cb[0].merch_depth]
+                    writer.writerow(row)
+                    for mini_p in products:
+                        writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
+                                        mini_p.number_of_facing_deep, mini_p.upc])
+
+            # for k, v in p_dict.items():
+            #     shelf_width, merch_width, products = 0, 0, []
+            #     for shelf in v:
+            #         shelf_width += shelf.shelf_width
+            #         merch_width += shelf.merch_width
+            #         products += shelf.products
+            #     row = [k,
+            #            v[0].coordinate_x,
+            #            v[0].coordinate_y,
+            #            shelf_width,
+            #            v[0].shelf_height,
+            #            v[0].shelf_depth,
+            #            merch_width,
+            #            v[0].merch_height,
+            #            v[0].merch_depth]
+            #     writer.writerow(row)
+            #     for mini_p in products:
+            #         writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
+            #                          mini_p.number_of_facing_deep, mini_p.upc])
 
     if os.path.isfile(path):
         process(path, out)
