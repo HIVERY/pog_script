@@ -37,25 +37,6 @@ def extract(path, out):
                     combine.append(shelf)
             lis.append(combine)
         shelf_combine = [dynamicCombine(shl) for shl in lis]
-        # for coordinate_y in key_set:
-        #     combine = []
-        #     for shelf in sorted(planogram.mini_planogram_set, key=lambda x: x.coordinate_x):
-        #         if shelf.coordinate_y == coordinate_y:
-        #             if shelf.combine_direction == "NO":
-        #                 p_dict[shelf.name] = [shelf]
-        #                 continue
-        #             if shelf.combine_direction in ["RIGHT", "BOTH"]:
-        #                 combine.append(shelf)
-        #             if shelf.combine_direction == "LEFT":
-        #                 combine.append(shelf)
-        #                 # number = ','.join(
-        #                 #     [shelf.name.split('-', 1)[1].strip() if '-' in shelf.name else shelf.name.split(' ')[-1].strip() for shel in combine])
-        #                 # key = "".join([shelf.name.split('-', 1)
-        #                 #                [0], "- ", "[", number, "]"])
-        #                 key = " - ".join([shel.name for shel in combine])
-        #                 p_dict[key] = combine
-        #                 # print(p_dict)
-        #                 combine = []
         fname = os.path.join(out, os.path.basename(
             path).replace('.psa', '.csv'))
         with open(fname, 'w') as fout:
@@ -70,7 +51,7 @@ def extract(path, out):
                         shelf_width += sf.shelf_width
                         merch_width += sf.merch_width
                         products += sf.products
-                    row = [" - ".join([shel.name for shel in cb]),
+                    row = [" * ".join([shel.name for shel in cb]),
                            cb[0].coordinate_x,
                            cb[0].coordinate_y,
                            shelf_width,
@@ -81,32 +62,17 @@ def extract(path, out):
                            cb[0].merch_depth]
                     writer.writerow(row)
                     for mini_p in products:
-                        writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
-                                        mini_p.number_of_facing_deep, mini_p.upc])
-
-            # for k, v in p_dict.items():
-            #     shelf_width, merch_width, products = 0, 0, []
-            #     for shelf in v:
-            #         shelf_width += shelf.shelf_width
-            #         merch_width += shelf.merch_width
-            #         products += shelf.products
-            #     row = [k,
-            #            v[0].coordinate_x,
-            #            v[0].coordinate_y,
-            #            shelf_width,
-            #            v[0].shelf_height,
-            #            v[0].shelf_depth,
-            #            merch_width,
-            #            v[0].merch_height,
-            #            v[0].merch_depth]
-            #     writer.writerow(row)
-            #     for mini_p in products:
-            #         writer.writerow([mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
-            #                          mini_p.number_of_facing_deep, mini_p.upc])
+                        writer.writerow([mini_p.upc, mini_p.number_of_facing_wide, mini_p.number_of_facing_high,
+                                        mini_p.number_of_facing_deep])
 
     if os.path.isfile(path):
         process(path, out)
     elif os.path.isdir(path):
+        if not out:
+            print("\033[91m")
+            print('ERROR: Output folder was not specified, using `-o` flag to specify output folder for batch run.')
+            print("\033[0m")
+            return
         if not os.path.exists(out):
             os.mkdir(os.path.join(os.getcwd(), out))
         for dirpath, subdirs, files in os.walk(path):

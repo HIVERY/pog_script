@@ -120,27 +120,35 @@ class ReadData:
 
 
 def dynamicCombine(lis):
-    # print([k.combine_direction for k in lis])
-    # ll = copy.deepcopy(lis)
+    """[summary]
+    Args:
+        lis ([Miniplanogram object]): [shelf with combination options]
+
+    Returns:
+        list[list]: [all the combinations of one layer]
+    
+    for example:
+        one layer shelf with combine flag
+            ['NO,"RIGHT",'BOTH','RIGHT','NO','LEFT', 'RIGHT', 'RIGHT']
+        
+        return all possible combinations if it can combine together
+           [['NO'], ["RIGHT", 'BOTH'], ['RIGHT'], ['NO'], ['LEFT'], ['RIGHT'], ['RIGHT']]
+    """
     comb = []
     if len(lis) == 1:
-        # print(True)
         return [lis]
     while lis and lis[0].combine_direction in ['NO', 'LEFT']:
         comb.append([lis[0]])
         lis.pop(0)
     if len(lis) == 1:
         comb.append([lis[0]]) 
-        # print([v for k in comb for v in k] == ll)
         return comb
     if not lis:
-        # print([v for k in comb for v in k] == ll)
         return comb
     dp = [0] * len(lis)
     dp[0] = [lis[0]]
     prune = [1] * len(lis)
     for i in range(1, len(lis)):
-        # print(comb)
         if lis[i].combine_direction == "NO":
             if prune[i-1]:
                 comb.append(dp[i-1])
@@ -177,12 +185,4 @@ def dynamicCombine(lis):
                 prune[i-1] = 0
         if i == len(lis) - 1 and lis[i].combine_direction == 'RIGHT' and prune[i]:
             comb.append([lis[i]])
-    # print(comb)
-    # print(dp)
-    # print([v.combine_direction for k in comb for v in k])
-    # print([v for k in comb for v in k] == ll)
-    # k = [v for k in comb for v in k]
-    # for i in range(len(k)):
-    #     print(k[i])
-    #     print(k[i] == lis[i])
     return comb
