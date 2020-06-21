@@ -243,10 +243,6 @@ class PSAInterface:
             position.y_cap_units_deep = int(fixture.depth / depth)
 
         if row[25]:
-            if int(row[25]):
-                with open('zcapping.txt', 'a') as fout:
-                    csv_writer = csv.writer(fout, lineterminator='\n')
-                    csv_writer.writerow([stroe_num, upc])
             position.z_cap_units_deep = parse_int(row[25])
         if row[27]:
             position.z_cap_reversed = bool(parse_int(row[27]))

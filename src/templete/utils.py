@@ -120,7 +120,7 @@ class ReadData:
 
 
 def dynamicCombine(lis):
-    """[summary]
+    """ using DP and pruning to find all the combinations
     Args:
         lis ([Miniplanogram object]): [shelf with combination options]
 
@@ -146,8 +146,12 @@ def dynamicCombine(lis):
     if not lis:
         return comb
     dp = [0] * len(lis)
+    
+    # init DP list
     dp[0] = [lis[0]]
+    # init Pruning list
     prune = [1] * len(lis)
+
     for i in range(1, len(lis)):
         if lis[i].combine_direction == "NO":
             if prune[i-1]:
