@@ -30,7 +30,7 @@ or
 >>> pog -p data/185/ -o output
 ```
 
-| Note: -p means the folder path to the file need to be converted(will find all the psa files automatically), -o means the output folder (can be automatically generate if it not exist)
+| Note: -p means the folder path to the file need to be converted(will find all the psa files automatically), -o means the output folder (can be automatically generate if it is not exist)
 
 
 ### Example output format
