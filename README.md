@@ -15,10 +15,6 @@ or
 >>> pip3 install -e .
 ```
 
-
-
-
-
 ### how to run
 
 * single run 
@@ -38,6 +34,9 @@ or
 
 
 ### Example output format
+
+| Note: find all possible combinations if it can combine together and combined them to one single shelf and list all the products in that shelf with essential informations.
+
 |shelf_name                                                                                                  |coordinate_x|coordinate_y|shelf_width|shelf_height|shelf_depth|merch_width|merch_height|merch_depth|
 |------------------------------------------------------------------------------------------------------------|------------|------------|-----------|------------|-----------|-----------|------------|-----------|
 |OPEN AIR COOLER DECK 4 FT - 102183 * OPEN AIR COOLER DECK 4 FT - 112184 * OPEN AIR COOLER DECK 4 FT - 122185|0.0         |0.0         |144.0      |1.25        |32.5       |144.0      |21.12       |32.5       |
@@ -59,3 +58,4 @@ or
 |1820006991                                                                                                  |1           |2           |5          |            |           |           |            |           |
 
 
+### |Note :  This is the first version, the format and information can be changed as required , if it needs to change, feel free to discuss :)
