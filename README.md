@@ -37,6 +37,8 @@ or
 
 | Note: find all possible combinations if it can combine together and combined them to one single shelf and list all the products in that shelf with essential informations.
 
+* shelf_name is all the shelves' name that can be combined conctating with `*`
+
 |shelf_name                                                                                                  |coordinate_x|coordinate_y|shelf_width|shelf_height|shelf_depth|merch_width|merch_height|merch_depth|
 |------------------------------------------------------------------------------------------------------------|------------|------------|-----------|------------|-----------|-----------|------------|-----------|
 |OPEN AIR COOLER DECK 4 FT - 102183 * OPEN AIR COOLER DECK 4 FT - 112184 * OPEN AIR COOLER DECK 4 FT - 122185|0.0         |0.0         |144.0      |1.25        |32.5       |144.0      |21.12       |32.5       |
