@@ -37,10 +37,11 @@ or
 | Note: -p means the path to the file need to be converted(will find all the psa files automatically), -o means the output folder (can be automatically generate)
 
 
-### output format
+### Example output format
 |shelf_name                                                                                                  |coordinate_x|coordinate_y|shelf_width|shelf_height|shelf_depth|merch_width|merch_height|merch_depth|
 |------------------------------------------------------------------------------------------------------------|------------|------------|-----------|------------|-----------|-----------|------------|-----------|
 |OPEN AIR COOLER DECK 4 FT - 102183 * OPEN AIR COOLER DECK 4 FT - 112184 * OPEN AIR COOLER DECK 4 FT - 122185|0.0         |0.0         |144.0      |1.25        |32.5       |144.0      |21.12       |32.5       |
+| upc | number_of_facing_unit_wide |number_of_facing_unit_high | number_of_facing_unit_deep| 
 |3410080741                                                                                                  |1           |2           |2          |            |           |           |            |           |
 |3410007341                                                                                                  |1           |2           |2          |            |           |           |            |           |
 |1820037030                                                                                                  |1           |2           |2          |            |           |           |            |           |
