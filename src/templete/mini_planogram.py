@@ -13,11 +13,13 @@ class MiniPosition:
 
 @dataclass
 class MiniPlanogram:
-    name: str = field(repr=False, default=None)
+    name: str = field(default=None)
     coordinate_x: float = field(repr=False, default=None)
     coordinate_y: float = field(repr=False, default=None)
     shelf_width: float = field(repr=False, default=None)
     shelf_height: float = field(repr=False, default=None)
+    shelf_slope: float = field(repr=False, default=None)
+    shelf_angle: float = field(repr=False, default=None)
     shelf_depth: float = field(repr=False, default=None)
     merch_width: float = field(repr=False, default=None)
     merch_height: float = field(repr=False, default=None)

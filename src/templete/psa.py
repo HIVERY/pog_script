@@ -34,7 +34,11 @@ class PSAInterface:
                 elif str(row[0]) == 'Planogram':
                     planogram = self._read_planogram_row(row)
                     planogram.store_id = self._get_store_from_filename(f)
-                    self.planogram = planogram
+                    if not self.planogram:
+                        self.planogram = planogram
+                    else:
+                        logger.warning(f'two or more planogram find in file {f}')
+                        return True
                 # read segment
                 elif str(row[0]) == 'Segment':
                     if planogram is None:
@@ -53,19 +57,9 @@ class PSAInterface:
                     if fixture is None:
                         continue
                     for num, segment in enumerate(planogram.segments):
-                        # print(num,segment.number)
                         FixtureWidth = fixture.width
-                        # print(fixture_width)
-                        if fixture.width > 48:
-                            # print(fixture_width)
-                            FixtureWidth = 48
-
-                        # print('{} >= {} and {} + {} <= {} + {} --{}----{}--'.format(fixture.x,segment.offset_x,fixture.x,fixture.width,segment.offset_x,segment.width,fixture.x >= segment.offset_x ,((fixture.x + fixture.width) <= (segment.offset_x + segment.width))))
-                        # print(fixture.type)
-                        # print('-----------=======')
                         if fixture.x >= segment.offset_x and (fixture.x + FixtureWidth) <= (segment.offset_x + segment.width):
                             fixture.number = len(segment.shelves)
-
                             if fixture.type == 0:
                                 # It's a shelf
                                 fixture.segment_id = segment.number
@@ -81,10 +75,8 @@ class PSAInterface:
                         position.number = len(fixture.positions)
                         # print('postion   ',fixture.name)
                         fixture.positions.append(position)
-                        # if position.product_upc == 7199009532:
-                        #     print()
-                        # print(position.product_upc)
-                        # print('--',fixture)
+        self.planogram.calculate_merch_dimensions()
+        return self.planogram
 
     """ ALL FUNCTIONs """
 

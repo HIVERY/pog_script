@@ -1,11 +1,11 @@
 from src.templete.psa import PSAInterface
-from src.templete.utils import dynamicCombine
+from src.templete.planogram import Planogram
+from src.templete.utils import dynamicCombine, validate_combined_shelves
 import click
 from collections import defaultdict
 import os
 import csv
 import tqdm
-
 
 @click.command()
 @click.option(
@@ -24,7 +24,9 @@ def extract(path, out):
 
     def process(path, out):
         psa = PSAInterface()
-        psa.read_psa(path)
+        dup = psa.read_psa(path)
+        if not isinstance(dup, Planogram):
+            return
         planogram = psa.planogram
         planogram.calculate_merch_dimensions()
         key_set = sorted(
@@ -37,6 +39,10 @@ def extract(path, out):
                     combine.append(shelf)
             lis.append(combine)
         shelf_combine = [dynamicCombine(shl) for shl in lis]
+        new_shelf_combine, fail = validate_combined_shelves(shelf_combine)
+        # check all combined shevles if can not combine, split
+        while fail:
+            new_shelf_combine, fail = validate_combined_shelves(new_shelf_combine)
         fname = os.path.join(out, os.path.basename(
             path).replace('.psa', '.csv'))
         with open(fname, 'w') as fout:

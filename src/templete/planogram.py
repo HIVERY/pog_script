@@ -143,7 +143,7 @@ class Planogram:
                         "ERROR: No known height above (segment/planogram) for shelf {}".format(shelf.name))
                     shelf.merch_height = 20
             except IndexError:
-                logging.error(self.segments)
+                logging.error('index error')
 
     def calculate_levels(self):
         for segment in self.segments:
@@ -183,6 +183,8 @@ class Planogram:
                 mini.name = shel.name
                 mini.coordinate_x = shel.x
                 mini.coordinate_y = shel.y
+                mini.shelf_angle = shel.angle
+                mini.shelf_slope = shel.slope
                 mini.shelf_width = shel.width
                 mini.shelf_height = shel.height
                 mini.shelf_depth = shel.depth
@@ -198,7 +200,8 @@ class Planogram:
                         number_of_facing_deep=pos.base_units_deep,
                     )
                     mini.products.append(mini_p)
-                self.mini_planogram_set.append(mini)
+                if mini not in self.mini_planogram_set:
+                    self.mini_planogram_set.append(mini)
 
     def calculate_merch_dimensions(self, calculate_segment_dimensions=True):
         self.sort_lists()

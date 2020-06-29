@@ -1,7 +1,9 @@
-from itertools import tee
+
 import re
 import logging
 import enum
+from decimal import Decimal, ROUND_HALF_UP
+from itertools import tee
 import copy
 
 logger = logging.getLogger(__name__)
@@ -117,6 +119,77 @@ class ReadData:
         if self.file:
             # If it was a file close it
             self.file.close()
+
+
+def compare_floats(float1, compare_operator, float2, number_of_decimals=2, rounding=ROUND_HALF_UP):
+    # Deal with infinity
+    if float1 > 1e25:
+        float1 = 1e25
+    if float2 > 1e25:
+        float2 = 1e25
+    decimal1 = Decimal(float1).quantize(Decimal(str(10 ** -number_of_decimals)), rounding)
+    decimal2 = Decimal(float2).quantize(Decimal(str(10 ** -number_of_decimals)), rounding)
+    if compare_operator == '==':
+        return decimal1 == decimal2
+    if compare_operator == '!=':
+        # print(decimal1, decimal2)
+        return decimal1 != decimal2
+    elif compare_operator == '<=':
+        return decimal1 <= decimal2
+    elif compare_operator == '>=':
+        return decimal1 >= decimal2
+    elif compare_operator == '<':
+        return decimal1 < decimal2
+    elif compare_operator == '>':
+        return decimal1 > decimal2
+    else:
+        raise ValueError("Unknown comparison operator: {}".format(compare_operator))
+
+
+def can_combine(shelf1, shelf2):
+    # needs same y-coordinate
+    if compare_floats(round(shelf1.coordinate_y, 2), "!=", round(shelf2.coordinate_y, 2)):
+        error = f'coordinate_y {round(shelf1.coordinate_y,2)}, {round(shelf2.coordinate_y,2)} is not some'
+        return False, error
+    if compare_floats(shelf1.shelf_depth, "!=", shelf2.shelf_depth):                # needs same depth
+        error = f'shelf_depth {shelf1.shelf_depth}, {shelf2.shelf_depth} is not some'
+        return False, error
+    if compare_floats(shelf1.shelf_slope, "!=", shelf2.shelf_slope):                # needs same slope
+        error = f'shelf_slope {shelf1.shelf_slope}, {shelf2.shelf_slope} is not some'
+        return False, error
+    # needs same merchdandise height
+    # if compare_floats(round(shelf1.merch_height, 2), "!=", round(shelf2.merch_height, 2)):
+    #     error = f'merch_height {round(shelf1.merch_height, 2)}, {shelf2.merch_height} is not some'
+    #     return False, error
+    # needs same merchdandise depth
+    # if compare_floats(shelf1.merch_depth, "!=", shelf2.merch_depth):
+    #     error = f'merch_depth {shelf1.merch_depth}, {shelf2.merch_depth} is not some'
+    #     return False, error
+    if compare_floats(shelf1.coordinate_x + shelf1.shelf_width, "!=", shelf2.coordinate_x):        # needs to be adjacent
+        error = f'coordinate_x not adjacent {shelf1.coordinate_x + shelf1.shelf_width }, {shelf2.coordinate_x} is not some, will split the shelves'
+        return False, error
+    return True, ''
+
+
+def validate_combined_shelves(combined_shelves):
+    fail = False
+    new_combined_shelves = copy.deepcopy(combined_shelves)
+    if not combined_shelves:
+        raise Exception('combine shelves is not created')
+    for idx1, CombinedShelves in enumerate(combined_shelves):
+        for idx2, combinedShelf in enumerate(CombinedShelves):
+            if len(combinedShelf) == 1:
+                continue
+            for i in range(len(combinedShelf)-1):
+                combine, error = can_combine(combinedShelf[i], combinedShelf[i+1])
+                if combine:
+                    continue
+                else:
+                    fail = True
+                    del new_combined_shelves[idx1][idx2]  
+                    new_combined_shelves[idx1].extend([combinedShelf[:i+1], combinedShelf[i+1:]])
+                    logger.warning(f'validate failed: can not combine cause {error}')
+    return new_combined_shelves, fail
 
 
 def dynamicCombine(lis):
