@@ -157,14 +157,6 @@ def can_combine(shelf1, shelf2):
     if compare_floats(shelf1.shelf_slope, "!=", shelf2.shelf_slope):                # needs same slope
         error = f'shelf_slope {shelf1.shelf_slope}, {shelf2.shelf_slope} is not some'
         return False, error
-    # needs same merchdandise height
-    # if compare_floats(round(shelf1.merch_height, 2), "!=", round(shelf2.merch_height, 2)):
-    #     error = f'merch_height {round(shelf1.merch_height, 2)}, {shelf2.merch_height} is not some'
-    #     return False, error
-    # needs same merchdandise depth
-    # if compare_floats(shelf1.merch_depth, "!=", shelf2.merch_depth):
-    #     error = f'merch_depth {shelf1.merch_depth}, {shelf2.merch_depth} is not some'
-    #     return False, error
     if compare_floats(shelf1.coordinate_x + shelf1.shelf_width, "!=", shelf2.coordinate_x):        # needs to be adjacent
         error = f'coordinate_x not adjacent {shelf1.coordinate_x + shelf1.shelf_width }, {shelf2.coordinate_x} is not some, will split the shelves'
         return False, error
